@@ -1,5 +1,8 @@
 package com.example.exercise_2025_11_25;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -7,9 +10,15 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -20,6 +29,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 
 public class ToDoItemEditActivity extends AppCompatActivity {
 
@@ -33,6 +43,15 @@ public class ToDoItemEditActivity extends AppCompatActivity {
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
+
+    TextView relatedContactTextView;
+
+
+    private static final int READ_CONTACTS_REQUEST_CODE = 1;
+    private final int CONTACT_LOADER = 10;
+
+    ArrayList<String> itemPhones = new ArrayList<>();
+    int itemID = -1;
 
     public boolean isDate(String date) {
         if (date == null)
@@ -84,7 +103,23 @@ public class ToDoItemEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_to_do_item_edit);
-        int itemID = -1;
+
+
+
+        ActivityResultLauncher<Intent> contactsLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Intent intent = result.getData();
+                            assert intent != null;
+                            ArrayList<String> itemContacts = intent.getStringArrayListExtra("itemContacts");
+                            assert itemContacts != null;
+                            itemPhones = itemContacts;
+                        }
+                    }
+                });
 
         titleEditText = findViewById(R.id.titleEditText);
         descriptionEditText = findViewById(R.id.descriptionEditText);
@@ -93,6 +128,7 @@ public class ToDoItemEditActivity extends AppCompatActivity {
         statusCheckBox = findViewById(R.id.statusCheckBox);
         saveButton = findViewById(R.id.saveButton);
         cancelButton = findViewById(R.id.cancelButton);
+        relatedContactTextView = findViewById(R.id.contactsTextViewButton);
 
         Intent incomingIntent = getIntent();
         if (incomingIntent != null) {
@@ -107,6 +143,8 @@ public class ToDoItemEditActivity extends AppCompatActivity {
             deadlineTimeEditText.setText(deadline.format(timeFormatter));
             statusCheckBox.setChecked(incomingIntent.getBooleanExtra("itemStatus", false));
             itemID = incomingIntent.getIntExtra("itemID", -1);
+            itemPhones = incomingIntent.getStringArrayListExtra("itemContacts");
+
         }
 
         deadlineDateEditText.setOnClickListener(v -> {
@@ -143,15 +181,16 @@ public class ToDoItemEditActivity extends AppCompatActivity {
 
         Intent intent = new Intent(ToDoItemEditActivity.this, MainActivity.class);
 
-        final int finalItemID = itemID;
+
         saveButton.setOnClickListener(v -> {
-            intent.putExtra("itemID", finalItemID);
+            intent.putExtra("itemID", itemID);
             intent.putExtra("itemTitle", titleEditText.getText().toString().trim());
             intent.putExtra("itemDescription", descriptionEditText.getText().toString().trim());
             intent.putExtra("itemStatus", statusCheckBox.isChecked());
             String selectedDateString = deadlineDateEditText.getText().toString().trim();
             String selectedTimeString = deadlineTimeEditText.getText().toString().trim();
             intent.putExtra("itemDeadline", selectedTimeString + " " + selectedDateString);
+            intent.putStringArrayListExtra("itemContacts", itemPhones);
             setResult(RESULT_OK, intent);
             finish();
         });
@@ -159,6 +198,13 @@ public class ToDoItemEditActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(v -> {
             setResult(RESULT_CANCELED, intent);
             finish();
+        });
+
+
+        relatedContactTextView.setOnClickListener(v -> {
+            Intent contactsIntent = new Intent(this, ContactActivity.class);
+            contactsIntent.putStringArrayListExtra("itemContacts", itemPhones);
+            contactsLauncher.launch(contactsIntent);
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

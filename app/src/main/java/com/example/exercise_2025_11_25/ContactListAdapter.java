@@ -19,6 +19,7 @@ public class ContactListAdapter extends ArrayAdapter {
     TextView phoneTextView;
     TextView positionTextView;
     TextView nameTextView;
+    ToggleableRadioButton selectedRadioButton;
 
     public ContactListAdapter (Context context, int resource, List<ContactItem> contacts) {
         super(context, resource, contacts);
@@ -41,13 +42,23 @@ public class ContactListAdapter extends ArrayAdapter {
             nameTextView = (TextView) v.findViewById(R.id.contactName);
             phoneTextView = (TextView) v.findViewById(R.id.contactPhone);
             positionTextView = (TextView) v.findViewById(R.id.contactPosition);
+            selectedRadioButton = (ToggleableRadioButton) v.findViewById(R.id.itemSelected);
+
 
             if(nameTextView!=null)
                 nameTextView.setText(c.getName());
             if(phoneTextView!=null)
                 phoneTextView.setText(String.valueOf(c.getPhone()));
-            if(positionTextView!= null)
-                positionTextView.setText(String.valueOf(position));
+            if(positionTextView!= null) {
+                int temp = position + 1;
+                positionTextView.setText(String.valueOf(temp));
+            }
+            if(selectedRadioButton!=null){
+                selectedRadioButton.setChecked(c.isSelected());
+                selectedRadioButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    c.setSelected(isChecked);
+                });
+            }
         }
         return v;
     }

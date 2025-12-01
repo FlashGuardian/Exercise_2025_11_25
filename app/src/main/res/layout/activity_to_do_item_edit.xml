@@ -116,8 +116,9 @@
             android:layout_gravity="center"
             android:gravity="center_vertical"
             android:text="Related Contacts"
-            android:textColor="#ff49454f"
             android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground"
             android:drawableEnd="@drawable/ic_next"
             android:textSize="14sp" />
 

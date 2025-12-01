@@ -50,9 +50,10 @@ public class MainActivity extends AppCompatActivity {
                         String itemDescription = intent.getStringExtra("itemDescription");
                         boolean itemStatus = intent.getBooleanExtra("itemStatus", false);
                         LocalDateTime itemDeadline = LocalDateTime.parse(intent.getStringExtra("itemDeadline"), formatter);
+                        ArrayList<String> itemContacts = intent.getStringArrayListExtra("itemContacts");
                         if (itemID == -1){
                             itemID = ID_GEN.getAndIncrement();
-                            TodoItem newItem = new TodoItem(itemID, itemTitle, itemDescription, itemDeadline, itemStatus);
+                            TodoItem newItem = new TodoItem(itemID, itemTitle, itemDescription, itemDeadline, itemStatus, itemContacts);
                             todoItemList.add(newItem);
                         }
                         else {
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
                                     todoItem.setDescription(itemDescription);
                                     todoItem.setDeadline(itemDeadline);
                                     todoItem.setStatus(itemStatus);
+                                    todoItem.setRelatedContacts(itemContacts);
                                 }
                             }
                         }
@@ -94,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("itemDescription",item.getDescription());
             intent.putExtra("itemDeadline", item.getDeadline().format(formatter));
             intent.putExtra("itemStatus", item.getStatus());
+            intent.putStringArrayListExtra("itemContacts", item.getRelatedContacts());
             launcher.launch(intent);
         });
 

@@ -1,6 +1,7 @@
 package com.example.exercise_2025_11_25;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TodoItem {
@@ -10,19 +11,20 @@ public class TodoItem {
     private String title;
     private String description;
     private LocalDateTime deadline;
-    private List<ContactItem> relatedContacts;
+    private ArrayList<String> relatedContacts;
     private boolean status;
     private boolean isSelected;
 
     public TodoItem(int itemID, String Title, String Description, LocalDateTime deadline) {
-        this(itemID, Title, Description, deadline, IN_PROGRESS);
+        this(itemID, Title, Description, deadline, IN_PROGRESS, new ArrayList<>());
     }
-    public TodoItem(int itemID, String Title, String Description , LocalDateTime deadline,Boolean Status) {
+    public TodoItem(int itemID, String Title, String Description , LocalDateTime deadline,Boolean Status, ArrayList<String> relatedContacts) {
         this.itemID = itemID;
         title = Title;
         description = Description;
         this.deadline = deadline;
         status = Status;
+        this.relatedContacts = relatedContacts;
     }
 
     public  String getTitle() {
@@ -70,10 +72,10 @@ public class TodoItem {
     public void setSelected(boolean isSelected) {
         this.isSelected = isSelected;
     }
-    public List<ContactItem> getRelatedContacts() {
+    public ArrayList<String> getRelatedContacts() {
         return  relatedContacts;
     }
-    public void setRelatedContacts(List<ContactItem> relatedContacts) {
+    public void setRelatedContacts(ArrayList<String> relatedContacts) {
         this.relatedContacts = relatedContacts;
     }
 }
