@@ -41,11 +41,11 @@ public class ToDoItemAdapter extends ArrayAdapter {
         TodoItem todoItem = (TodoItem) getItem(position);
 
         if (todoItem!=null){
-            TextView positionTextView = (TextView) v.findViewById(R.id.itemPosition);
-            TextView titleTextView = (TextView) v.findViewById(R.id.itemTitle);
-            CheckBox statusCheckBox = (CheckBox) v.findViewById(R.id.itemStatus);
-            TextView statusTextView = (TextView) v.findViewById(R.id.itemStatusTextView);
-            ToggleableRadioButton selectedRadioButton = v.findViewById(R.id.itemSelected);
+            positionTextView = (TextView) v.findViewById(R.id.itemPosition);
+            titleTextView = (TextView) v.findViewById(R.id.itemTitle);
+            statusCheckBox = (CheckBox) v.findViewById(R.id.itemStatus);
+            statusTextView = (TextView) v.findViewById(R.id.itemStatusTextView);
+            selectedRadioButton = v.findViewById(R.id.itemSelected);
 
 
             if(positionTextView!=null) {
